@@ -1,0 +1,25 @@
+@keyframes cardFlip {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(180deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.card-flip {
+    animation: cardFlip 0.3s ease-in-out;
+}
+
+.record-pulse {
+    animation: pulse 1s infinite;
+}
