@@ -1,12 +1,8 @@
 export default function MemoryCard({ data = [], handleClick }) {
-  const cards = [...data, ...data]
-    .map((emoji) => ({
-      ...emoji,
-      id: Math.random(),
-      isFlipped: false,
-      isMatched: false,
-    }))
-    .sort(() => Math.random() - 0.5);
+  // Create pairs of cards with unique IDs if they don't already have them
+  const cards = data.map(emoji => 
+    emoji.id ? emoji : { ...emoji, id: Math.random() }
+  );
 
   return (
     <div

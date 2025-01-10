@@ -76,16 +76,18 @@ export default function Form({ handleSubmit }) {
         )}
       </div>
 
-      <button
-        type="submit"
-        className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold
-                  py-2 md:py-3 px-6 md:px-8 rounded-lg transition-colors duration-200
-                  focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50
-                  shadow-lg hover:shadow-xl text-base md:text-lg"
-        aria-label="Start new game"
-      >
-        Start Game
-      </button>
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          className="bg-purple-600 hover:bg-purple-700 text-white font-bold
+                    py-2 md:py-3 px-6 md:px-8 rounded-lg transition-colors duration-200
+                    focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50
+                    shadow-lg hover:shadow-xl text-base md:text-lg"
+          aria-label="Start new game"
+        >
+          Start Game
+        </button>
+      </div>
     </form>
   );
 }

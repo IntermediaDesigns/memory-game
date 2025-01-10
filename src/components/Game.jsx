@@ -31,9 +31,39 @@ export default function Game() {
       }
 
       const data = await response.json();
-      const dataSample = data.slice(0, cardCount);
+      console.log('API Response:', data);
+      // Transform the API response to match expected format
+      // Transform the API response and create pairs of cards
+      const transformedData = data
+        .slice(0, cardCount)
+        .map(emoji => {
+          console.log('Processing emoji:', emoji);
+          // Handle both single and multiple unicode points
+          const emojiChar = emoji.unicode
+            .map(u => {
+              console.log('Unicode value:', u);
+              const codePoint = parseInt(u.replace('U+', ''), 16);
+              console.log('Code point:', codePoint);
+              return String.fromCodePoint(codePoint);
+            })
+            .join('');
+          console.log('Final emoji char:', emojiChar);
+          return {
+            htmlCode: emojiChar,
+            id: Math.random(),
+            isFlipped: false,
+            isMatched: false
+          };
+        });
+      
+      // Create pairs of cards and shuffle them
+      const cardPairs = [...transformedData, ...transformedData.map(card => ({
+        ...card,
+        id: Math.random() // New ID for the pair
+      }))].sort(() => Math.random() - 0.5);
+      console.log('Transformed data:', transformedData);
 
-      setEmojisData(dataSample);
+      setEmojisData(cardPairs);
       setTimeLimit(timeLimit);
       setIsGameOn(true);
       setScore(0);
@@ -59,8 +89,17 @@ export default function Game() {
       setStartTime(Date.now());
     }
 
-    const newFlippedCards = [...flippedCards, card];
+    // Update the card's flipped state
+    const updatedCard = { ...card, isFlipped: true };
+    const newFlippedCards = [...flippedCards, updatedCard];
     setFlippedCards(newFlippedCards);
+    
+    // Update the emojisData to reflect the flipped state
+    setEmojisData(currentEmojis => 
+      currentEmojis.map(emoji => 
+        emoji.id === card.id ? { ...emoji, isFlipped: true } : emoji
+      )
+    );
 
     if (newFlippedCards.length === 2) {
       setMoves((prev) => prev + 1);
@@ -68,6 +107,14 @@ export default function Game() {
       setTimeout(() => {
         const [firstCard, secondCard] = newFlippedCards;
         if (firstCard.htmlCode === secondCard.htmlCode) {
+          // Mark cards as matched
+          setEmojisData(currentEmojis =>
+            currentEmojis.map(emoji =>
+              emoji.id === firstCard.id || emoji.id === secondCard.id
+                ? { ...emoji, isMatched: true }
+                : emoji
+            )
+          );
           const newMatchedPairs = [...matchedPairs, firstCard.htmlCode];
           setMatchedPairs(newMatchedPairs);
           setScore((prev) => prev + 100);
@@ -95,6 +142,14 @@ export default function Game() {
             setGameOver(true);
           }
         } else {
+          // Reset flipped state for unmatched cards
+          setEmojisData(currentEmojis =>
+            currentEmojis.map(emoji =>
+              emoji.id === firstCard.id || emoji.id === secondCard.id
+                ? { ...emoji, isFlipped: false }
+                : emoji
+            )
+          );
           setScore((prev) => Math.max(0, prev - 10));
         }
         setFlippedCards([]);
